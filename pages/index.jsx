@@ -6,6 +6,8 @@ import RedButton from "ui/button/red"
 import { gameStore } from "mobx/gameStore"
 import { getRandomNumber, sleep } from "lib/util"
 import BlueButton from "ui/button/blue"
+import TimeLeft from "components/TimeLeft"
+import useSound from "hooks/useSound"
 
 const index = observer(() => {
   const router = useRouter()
@@ -43,6 +45,9 @@ const index = observer(() => {
 
 const Show = observer(({ data, setIsButtons }) => {
   const [chosen, setChosen] = useState("")
+  const [isTimer, setIsTimer] = useState(false)
+  const [canStartTimer, setCanStartTimer] = useState(false)
+  const [minutes, setMinutes] = useState(0)
   const [ind, setInd] = useState(0)
 
   if (data.length < 1) return
@@ -73,6 +78,26 @@ const Show = observer(({ data, setIsButtons }) => {
       <RedButton className="mb-2" onClick={startSpin}>
         Spin
       </RedButton>
+      {isTimer && !canStartTimer && (
+        <input
+          type="number"
+          className="border-2 rounded-md"
+          value={minutes}
+          onChange={(e) => setMinutes(e.target.value)}
+        />
+      )}
+      {minutes > 0 && canStartTimer && <TimeLeft minutes={minutes} />}
+      {isTimer && !canStartTimer && (
+        <RedButton className="mb-2" onClick={() => setCanStartTimer(true)}>
+          Start Timer
+        </RedButton>
+      )}
+
+      {!isTimer && (
+        <RedButton className="mb-2" onClick={() => setIsTimer(true)}>
+          Set Timer
+        </RedButton>
+      )}
       <BlueButton onClick={() => setIsButtons(true)}>Back</BlueButton>
     </div>
   )
